@@ -1,0 +1,9 @@
+{
+  "name": "nosql-no-problems",
+  "description": "Presentation for JAMK about NoSQL and the dangers that lie with it.",
+  "scripts": {
+  	"start": "open index.html"
+  },
+  "author": "Taneli Hartikainen <taneli.hartikainen89@gmail.com>",
+  "license": "MIT"
+}

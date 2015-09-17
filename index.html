@@ -1,0 +1,302 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>NoSQL Woes</title>
+  <!-- styles are shamelessly copied from the 'remarkjs' page -->
+  <style>
+    @import url(https://fonts.googleapis.com/css?family=Droid+Serif);
+    @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+    @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+    body {
+      font-family: 'Droid Serif';
+    }
+    h1, h2, h3 {
+      font-family: 'Yanone Kaffeesatz';
+      font-weight: 400;
+      margin-bottom: 0;
+    }
+    .remark-slide-content h1 { font-size: 3em; }
+    .remark-slide-content h2 { font-size: 2em; }
+    .remark-slide-content h3 { font-size: 1.6em; }
+    .footnote {
+      position: absolute;
+      bottom: 3em;
+    }
+    li p { line-height: 1.25em; }
+    .red { color: #fa0000; }
+    .large { font-size: 2em; }
+    a, a > code {
+      color: rgb(249, 38, 114);
+      text-decoration: none;
+    }
+    code {
+      background: #e7e8e2;
+      border-radius: 5px;
+    }
+    .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    .remark-code-line-highlighted     { background-color: #373832; }
+    .pull-left {
+      float: left;
+      width: 47%;
+    }
+    .pull-right {
+      float: right;
+      width: 47%;
+    }
+    .pull-right ~ p {
+      clear: both;
+    }
+    #slideshow .slide .content code {
+      font-size: 0.8em;
+    }
+    #slideshow .slide .content pre code {
+      font-size: 0.9em;
+      padding: 15px;
+    }
+    .inverse {
+      background: #272822;
+      color: #777872;
+      text-shadow: 0 0 20px #333;
+    }
+    .inverse h1, .inverse h2 {
+      color: #f3f3f3;
+      line-height: 0.8em;
+    }
+
+    #slide-inverse .footnote {
+      bottom: 12px;
+      left: 20px;
+    }
+    #slide-how .slides {
+      font-size: 0.9em;
+      position: absolute;
+      top:  151px;
+      right: 140px;
+    }
+    #slide-how .slides h3 {
+      margin-top: 0.2em;
+    }
+    #slide-how .slides .first, #slide-how .slides .second {
+      padding: 1px 20px;
+      height: 90px;
+      width: 120px;
+      -moz-box-shadow: 0 0 10px #777;
+      -webkit-box-shadow: 0 0 10px #777;
+      box-shadow: 0 0 10px #777;
+    }
+    #slide-how .slides .first {
+      background: #fff;
+      position: absolute;
+      top: 20%;
+      left: 20%;
+      z-index: 1;
+    }
+    #slide-how .slides .second {
+      position: relative;
+      background: #fff;
+      z-index: 0;
+    }
+
+    .left-column {
+      color: #777;
+      width: 20%;
+      height: 92%;
+      float: left;
+    }
+      .left-column h2:last-of-type, .left-column h3:last-child {
+        color: #000;
+      }
+
+    .right-column {
+      width: 75%;
+      float: right;
+      padding-top: 1em;
+    }
+  </style>
+</head>
+<body>
+  <textarea id="source">
+    class: inverse, center, middle
+    # NoSQL No Problems?
+    .footnote.pull-right[github/[tanelih](https://github.com/tanelih)]
+    ---
+    class: center, middle
+    # What is NoSQL?
+    Let's examine some of the defining features of both **Relational** and
+    **NoSQL** databases.
+    ---
+    .left-column[
+      # What is NoSQL?
+      ## Relational Databases
+    ]
+    .right-column[
+      Traditional databases like MySQL and PostgreSQL are considered
+      **relational** in the way they model data.
+    ]
+    --
+    count: false
+    .right-column[
+      **SQL** is the language used to query and update the database.
+      ```sql
+      SELECT * FROM users WHERE id = 1;
+      ```
+    ]
+    --
+    count: false
+    .right-column[
+      Strong **transaction** model ensures the data is correct and up to date.
+      Transactions that go wrong can be rolled back in **isolation**, without
+      affecting other transactions.
+
+      Databases, which implement these properties can be considered **ACID**.
+    ]
+    ---
+    .left-column[
+      # What is NoSQL?
+      ## Relational Databases
+      ## NoSQL Databases
+    ]
+    .right-column[
+      Top notch **scalability** and **performance**. Weak data model ensures you
+      can change your **schema** on the fly without breaking anything.
+    ]
+    --
+    count: false
+    .right-column[
+      Performance tends to come with a cost...
+    ]
+    --
+    count: false
+    .right-column[
+      Different NoSQL databases define their own way of accessing the data,
+      there isn't really a standard like **SQL**.
+    ]
+    --
+    count: false
+    .right-column[
+      Lack of **joins** and **collapses** quickly leads to having to implement
+      these in your application code or using a third party library.
+
+      ```javascript
+      users.remove({ id: user.id }, function(err, user) {
+        books.remove({ author: user.id }, function(err, book) {
+          notes.remove({ book: book.id }, function(err, note) {
+            // ... you can see where this is going
+          })})})
+      ```
+    ]
+    --
+    count: false
+    .right-column.center[
+      ![](http://emojipedia-us.s3.amazonaws.com/cache/7e/d0/7ed0401e63825aa8be667a293776b498.png)
+    ]
+    ---
+    class: center, middle
+    # Categories of NoSQL
+    ---
+    .left-column[
+      ## Key-value
+    ]
+    .right-column[
+      Probably the simplest form of data storage. You can assign values to keys,
+      that's it. It really is that simple.
+
+      ```bash
+      > SET juukelis "puukelis"
+      OK
+      > GET juukelis
+      "puukelis"
+      ```
+
+      This simplicity leads to extreme ease of scaling the system. Where the
+      traditional SQL based systems scale vertically, the NoSQL systems tend
+      to scale horizontally.
+
+      Check out [Redis](http://redis.io).
+    ]
+    ---
+    .left-column[
+      ## Key-value
+      ## Document
+    ]
+    .right-column[
+      Most document oriented databases store the data in the **JSON** format,
+      with some using the **Binary JSON (BSON)**. This means that it's quite
+      easy to visualize the data.
+
+      ```json
+      {
+        "users": [
+          {
+            "id": 12,
+            "name": "Andrew Hunt",
+            "books": [
+              {
+                "title": "The Pragmatic Programmer",
+                "authors": [ 12, 37 ]
+              }
+            ]
+          }
+        ]
+      }
+      ```
+
+      Being a derivative of the key-value database, it inherits the ease of
+      scalability, while retaining the more advanced features.
+
+      Check out [MongoDB](https://www.mongodb.org).
+    ]
+    ---
+    .left-column[
+      ## Key-value
+      ## Document
+      ## Graph
+    ]
+    .right-column[
+      ### Graph
+      Graph databases are basically a set of nodes, with n-amount of connections
+      in between them. Even complex queries are highly performant since these
+      connections are stored as first class citizens.
+
+      You can often find graph databases in use when dealing with highly
+      connected data. For example, social and logistic data is usually modeled
+      as a graph.
+
+      Check out [Neo4J](http://neo4j.com).
+    ]
+    ---
+    .left-column[
+      ## Key-value
+      ## Document
+      ## Graph
+      ## Column Oriented
+    ]
+    .right-column[
+      ### Column Oriented
+      Column oriented databases process data by the **column**. This means
+      increased performance for queries, which only touch a handful of columns.
+
+      If you need to run operations, which touch all of the stored documents
+      but only a specific column in them, this might be your choice.
+
+      Check out [Cassandra](http://cassandra.apache.org).
+    ]
+    ---
+    # Building a relational database in NoSQL-land
+    --
+    count: false
+    ### ...and why this is a bad idea
+    ---
+    Let's go!
+  </textarea>
+  <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+  </script>
+  <script>
+    remark.create({ highlightStyle: 'monokai' });
+  </script>
+</body>
+</html>
+
+
+
