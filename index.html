@@ -444,6 +444,35 @@
     class: center, middle
     ![](http://emojipedia-us.s3.amazonaws.com/cache/7e/d0/7ed0401e63825aa8be667a293776b498.png)
     ---
+    .left-column[
+      #### contriboard
+    ]
+    .right-column[
+      Let's delete a ticket, and any dangling references.
+      ```javascript
+      collection('tickets').remove({ id: 20 }, function(err) {
+        if(err) {
+          throw err
+        }
+        var query = {
+          tickets: 20
+        }
+        var update = {
+          $pull: {
+            tickets: 20
+          }
+        }
+        collection('boards').update(query, update, function(err) {
+          if(err) {
+            throw err
+          }
+          // ...
+        })
+      })
+      ```
+      Image if we had referenced that ticket in multiple other collections.
+    ]
+    ---
     # Right Tool for the Right Job
     --
     count: false
@@ -452,8 +481,8 @@
 
     --
     count: false
-    >> *If you're still in the MVP stage, where you don't exactly know what sort
-    >> of forms your data will be taking, consider NoSQL for minimal hassle.*
+    > Note that if you're still in the MVP stage, where you don't exactly know
+    > what sort of forms your data will be taking, consider NoSQL for minimal hassle.
 
     --
     count: false
@@ -466,7 +495,7 @@
     Remember there are no silver bullets...
     --
     count: false
-    but there are ways of making things work for you.
+    but there are ways of making things seem more sane.
     ---
     class: inverse, middle, center
     # Questions?
