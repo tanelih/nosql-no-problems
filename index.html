@@ -151,6 +151,12 @@
 
       Databases, which implement these properties can be considered **ACID**.
     ]
+    --
+    count: false
+    .right-column.footnote[
+      **ACID** stands for **Atomicity**, **Consistency**, **Isolation** and
+      **Durability**.
+    ]
     ---
     .left-column[
       # What is NoSQL?
@@ -209,7 +215,7 @@
       "puukelis"
       ```
 
-      This simplicity leads to extreme ease of scaling the system. Where the
+      This simplicity leads to extreme ease of scaling the system: where the
       traditional SQL based systems scale vertically, the NoSQL systems tend
       to scale horizontally.
 
@@ -283,17 +289,192 @@
       Check out [Cassandra](http://cassandra.apache.org).
     ]
     ---
-    # Building a relational database in NoSQL-land
+    class: inverse, middle, center
+    # Relational data in the land of NoSQL
+    [ case contriboard ]
+    ---
+    .left-column[
+      #### contriboard
+    ]
+    .right-column[
+      Let's define some of the basic entities in our application through some
+      simple use cases.
+    ]
     --
     count: false
-    ### ...and why this is a bad idea
+    .right-column[
+    - **User** creates a **Board**
+    - **User** creates a **Ticket** on the **Board**
+    - **User** moves a **Ticket** around on the **Board**
+    ]
+    --
+    count: false
+    .right-column[
+      Given the above, our data might look like this:
+      ```json
+      {
+        "users": [{
+          "id": 10,
+          "boards": [{
+            "id": 1,
+            "tickets": [{
+              "id": 20,
+              "position": { "x": 0, "y": 0 }
+            }]
+          }]
+        }]
+      }
+      ```
+    ]
     ---
-    Let's go!
+    .left-column[
+      #### contriboard
+    ]
+    .right-column[
+      Let's introduce another use case.
+    ]
+    --
+    count: false
+    .right-column[
+    - **User** invites another **User** to the board.
+    ]
+    --
+    count: false
+    .right-column[
+      ```json
+      {
+        "users": [
+          { "id": 10 },
+          { "id": 11 }
+        ],
+        "boards": [{
+          "id": 1,
+          "users": [ 10, 11 ],
+          "tickets": [{
+            "id": 20,
+            "position": { "x": 0, "y": 0 }
+          }]
+        }]
+      }
+      ```
+    ]
+    --
+    count: false
+    .right-column[
+      Uh oh. We've introduced the concept of references to our database.
+    ]
+    ---
+    .left-column[
+      #### contriboard
+    ]
+    .right-column[
+      - **User** wants to have the **Ticket** exist in another **Board** at the same
+        time.
+    ]
+    --
+    count: false
+    .right-column[
+      ```json
+      {
+        "users": [
+          { "id": 10 },
+          { "id": 11 }
+        ],
+        "boards": [{
+          "id": 1,
+          "users": [ 10, 11 ],
+          "tickets": [ 20 ]
+        }, {
+          "id": 1,
+          "users": [ 10 ],
+          "tickets": [ 20 ]
+        }],
+        "tickets": [{
+          "id": 20,
+          "position": { "x": 0, "y": 0 }
+        }]
+      }
+      ```
+    ]
+    --
+    count: false
+    .right-column[
+      That's a lot of **relations** for a **non-relational** database...
+    ]
+    ---
+    .left-column[
+      #### contriboard
+    ]
+    .right-column[
+      Let's delete a ticket.
+      ```javascript
+      collection('tickets').remove({ id: 20 }, function(err) {
+        // ...
+      })
+      ```
+    ]
+    --
+    count: false
+    .right-column[
+      Easy, right? What's our database looking like?
+    ]
+    --
+    count: false
+    .right-column[
+      ```json
+      {
+        "users": [
+          { "id": 10 },
+          { "id": 11 }
+        ],
+        "boards": [{
+          "id": 1,
+          "users": [ 10, 11 ],
+          "tickets": [ 20 ]
+        }, {
+          "id": 1,
+          "users": [ 10 ],
+          "tickets": [ 20 ]
+        }],
+        "tickets": [ ]
+      }
+      ```
+    ]
+    ---
+    class: center, middle
+    ![](http://emojipedia-us.s3.amazonaws.com/cache/7e/d0/7ed0401e63825aa8be667a293776b498.png)
+    ---
+    # Right Tool for the Right Job
+    --
+    count: false
+    Visualize your application's data and operations. Think about what sort of
+    a database fits your use case the best.
+
+    --
+    count: false
+    >> *If you're still in the MVP stage, where you don't exactly know what sort
+    >> of forms your data will be taking, consider NoSQL for minimal hassle.*
+
+    --
+    count: false
+    Your application might require multiple databases, for example an instance
+    of PostgreSQL for the data that is queried and operated upon often,
+    something like a MongoDB for statistics and Redis for session storage.
+
+    --
+    count: false
+    Remember there are no silver bullets...
+    --
+    count: false
+    but there are ways of making things work for you.
+    ---
+    class: inverse, middle, center
+    # Questions?
   </textarea>
   <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
   </script>
   <script>
-    remark.create({ highlightStyle: 'monokai' });
+    remark.create({ highlightStyle: 'solarized_dark' });
   </script>
 </body>
 </html>
