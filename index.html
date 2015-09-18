@@ -406,6 +406,84 @@
       #### contriboard
     ]
     .right-column[
+      Let's fetch some data and populate any references.
+    ]
+    --
+    count: false
+    .right-column[
+      ```javascript
+      collection('boards').find({}, (err, boards) => {
+        var userIDs = boards.map(board => board.users)
+          .flatten().unique()
+        var ticketIDs = boards.map(board => board.tickets)
+          .flatten().unique()
+        collection('users').find({id: {$in: userIDs}},
+          (err, users) => {
+            collection('tickets').find({id: {$in: ticketIDs}},
+              (err, tickets) => {
+                var populated = boards.map(board => {
+                  board.users = board.users
+                    .map(user => users.find(user))
+                  board.tickets = board.tickets
+                    .map(ticket => tickets.find(ticket))
+                  return board
+                })
+                // finally !!
+              })
+          })
+      })
+      ```
+    ]
+    --
+    count: false
+    .right-column[
+      Send help.
+    ]
+    ---
+    .left-column[
+      #### contriboard
+    ]
+    .right-column[
+      Let's use a popular library for MongoDB, [Mongoose](http://mongoosejs.com).
+    ]
+    --
+    count: false
+    .right-column[
+      ```javascript
+      boards.find({}).populate('users', 'tickets')
+        .exec((err, boards) => {
+          // done !!
+        })
+      ```
+    ]
+    --
+    count: false
+    .right-column[
+      There is a reason for the popularity of third party libraries such as
+      Mongoose.
+    ]
+    --
+    count: false
+    .right-column[
+      Interestingly Mongoose also allows us to define **schemas** for our data.
+      ```javascript
+      const UserSchema = Mongoose.Schema({
+        id: Mongoose.Schema.Types.ObjectID,
+        name: {
+          type: String, maxlength: 8
+        },
+        books: [{
+          ref: 'book',
+          type: Mongoose.Schema.Types.ObjectID
+        }]
+      })
+      ```
+    ]
+    ---
+    .left-column[
+      #### contriboard
+    ]
+    .right-column[
       Let's delete a ticket.
       ```javascript
       collection('tickets').remove({ id: 20 }, function(err) {
