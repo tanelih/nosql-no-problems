@@ -577,11 +577,168 @@
     ---
     class: inverse, middle, center
     # Questions?
+    ---
+    class: middle, center
+    # An Exercise
+    ---
+    Connect to your MongoDB instance via the `mongo` shell. Replace the address
+    with the address of your running `mongod` instance.
+    ```bash
+    $ mongo 127.0.0.1:27017/nosql-no-problems
+    ```
+    --
+    count: false
+    Now that you have an open shell, check that you're using the
+    `nosql-no-problems` database by running the following command.
+    ```bash
+    > db
+    nosql-no-problems
+    ```
+    --
+    count: false
+    Notice how we didn't actually create the database, instead they're created
+    on the fly as they're needed.
+
+    Try changing to another database by running the following, and then back to
+    the `nosql-no-problems` database to which we initially connected to.
+    ```bash
+    > use mysql-my-problems
+    switched to db mysql-my-problems
+
+    > use nosq-no-problems
+    switched to db nosql-no-problems
+    ```
+    ---
+    Run the following command:
+    ```bash
+    > show dbs
+    ```
+    Notice how you won't see the databases we used just now. This is because we
+    didn't add any content yet, so let's do just that.
+    --
+    count: false
+    Let's add a user to the `users` collection. You can run a `help` command in
+    order to find out how.
+    ```javascript
+    > help
+    > db.help()
+    > db.collection.help()
+    ```
+    --
+    count: false
+    ```javascript
+    > db.users.insert({ nick: 'huojo' })
+    WriteResult({ "nInserted" : 1 })
+    ```
+    Once again we didn't need to create anything in order to insert data into a
+    collection.
+    ---
+    Fetching data is fairly straightforward.
+    ```javascript
+    > db.users.find()
+    { "_id" : ObjectId("55fbea124db1df100bb36a68"), "nick" : "huojo" }
+    ```
+    --
+    count: false
+    Notice how MongoDB uses BSON **ObjectIds** internally. They're basically the
+    equivalent to SQL database's primary keys. They have a few interesting
+    properties.
+    ```javascript
+    > ObjectId().valueOf()
+    55fbf09e4db1df100bb36a6a
+
+    > ObjectId().getTimestamp()
+    ISODate("2015-09-18T11:08:38Z")
+    ```
+    --
+    count: false
+    Let's query by the `_id` attribute.
+    ```javascript
+    > db.users.find({ _id: "55fbea124db1df100bb36a68" })
+    >
+    ```
+    --
+    count: false
+    The `_id` attribute is an **ObjectId**.
+    ```javascript
+    > db.users.find({ _id: ObjectId("55fbea124db1df100bb36a68") })
+    { "_id" : ObjectId("55fbea124db1df100bb36a68"), "nick" : "huojo" }
+    ```
+    ---
+    Let's update our user.
+    ```javascript
+    > db.users.update({ _id: ObjectId("55fbea124db1df100bb36a68") }, {
+        firstName: "Jouni", lastName: "Huotari"
+      })
+    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+    > db.users.find({ _id: ObjectId("55fbea124db1df100bb36a68") }).pretty()
+    {
+      "_id" : ObjectId("55fbea124db1df100bb36a68"),
+      "firstName" : "Jouni",
+      "lastName" : "Huotari"
+    }
+    ```
+    --
+    count: false
+    Looks like we overwrote our user. In order to just update the user, we can
+    use the `$set` operator.
+    ```javascript
+    > db.users.update({ _id: ObjectId("55fbea124db1df100bb36a68") }, {
+        $set: { nick: 'huojo' }
+      })
+    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+    > db.users.find({ _id: ObjectId("55fbea124db1df100bb36a68") }).pretty()
+    {
+      "_id" : ObjectId("55fbea124db1df100bb36a68"),
+      "firstName" : "Jouni",
+      "lastName" : "Huotari",
+      "nick" : "huojo"
+    }
+    ```
+    ---
+    Finally we'll remove the user.
+    ```javascript
+    > db.remove({ _id: ObjectId("55fbea124db1df100bb36a68") })
+    WriteResult({ "nRemoved" : 1 })
+
+    > db.users.find().count()
+    0
+    ```
+    --
+    count: false
+    As you've probably guessed by now, the `mongo` shell is actually a
+    JavaScript shell. This means we can do stuff like...
+    --
+    count: false
+    Pluck attributes from a collection.
+    ```javascript
+    > db.users.find().map(function(user) { return user._id })
+    [ ObjectId("55fbfaa74db1df100bb36a6c") ]
+    ```
+    Ghetto population.
+    ```javascript
+    > db.users.find().map(function(user) {
+        user.books = db.books.find({ author: user._id }).toArray()
+        return user
+      })
+    [{
+      "_id" : ObjectId("55fbfaa74db1df100bb36a6c"),
+      "nick" : "huojo",
+      "books" : [{
+        "_id" : ObjectId("55fbfbe04db1df100bb36a6d"),
+        "name" : "The Good Book",
+        "author" : ObjectId("55fbfaa74db1df100bb36a6c")
+      }]
+    }]
+    ```
+
   </textarea>
   <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
   </script>
   <script>
-    remark.create({ highlightStyle: 'solarized_dark' });
+    remark.create({ highlightStyle: 'monokai_sublime' });
   </script>
 </body>
 </html>
