@@ -157,6 +157,20 @@
       **ACID** stands for **Atomicity**, **Consistency**, **Isolation** and
       **Durability**.
     ]
+    ???
+    **Atomicity** means that transactions are "all or nothing", meaning that if
+    one part of the transaction fails, it will leave the database unchanged.
+
+    **Consistency** means that transactions will bring the database from one
+    state to another, including the effects set by constraints, cascades and
+    triggers.
+
+    **Isolation** means that transactions will "appear" to execute serially, so
+    that the state of the database will also transact from one valid state to
+    another "serially".
+
+    **Durability** simply means that the data is durable, once a transaction is
+    complete, the resulting state is stored in *non-volatile memory*.
     ---
     .left-column[
       # What is NoSQL?
@@ -167,6 +181,9 @@
       Top notch **scalability** and **performance**. Weak data model ensures you
       can change your **schema** on the fly without breaking anything.
     ]
+    ???
+    Changing the schema when you're already running a production application can
+    however introduce changes where you must run something akin to migrations.
     --
     count: false
     .right-column[
@@ -178,6 +195,9 @@
       Different NoSQL databases define their own way of accessing the data,
       there isn't really a standard like **SQL**.
     ]
+    ???
+    Most however offer some form of a HTTP-based API to interact with the data,
+    exception being MongoDB where connections are simple TCP connections.
     --
     count: false
     .right-column[
@@ -221,6 +241,10 @@
 
       Check out [Redis](http://redis.io).
     ]
+    ???
+    Horizontal scaling means that we can scale by adding several cheap servers,
+    to run the system in "scale", whereas vertical scaling means to add more
+    power to a single machine.
     ---
     .left-column[
       ## Key-value
@@ -518,6 +542,8 @@
       }
       ```
     ]
+    ???
+    Dangling references, all around...
     ---
     class: center, middle
     ![](http://emojipedia-us.s3.amazonaws.com/cache/7e/d0/7ed0401e63825aa8be667a293776b498.png)
@@ -560,7 +586,8 @@
     --
     count: false
     > Note that if you're still in the MVP stage, where you don't exactly know
-    > what sort of forms your data will be taking, consider NoSQL for minimal hassle.
+    > what sort of forms your data will be taking, consider NoSQL for minimal
+    > amount of time spent configuring things.
 
     --
     count: false
@@ -585,6 +612,18 @@
     with the address of your running `mongod` instance.
     ```bash
     $ mongo 127.0.0.1:27017/nosql-no-problems
+    ```
+    ???
+    If the MongoDB instance requires authentication, here's how we do it:
+    ```javascript
+    > use admin
+    > db.auth(admin_user, admin_pwd)
+    > use nosql-no-worries
+    > db.createUser({
+        user: 'huojo', pwd: 'huojo', roles: [{
+          role: 'readWrite', db: 'nosql-no-worries'
+        }]
+      })
     ```
     --
     count: false
@@ -733,7 +772,6 @@
       }]
     }]
     ```
-
   </textarea>
   <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
   </script>
